@@ -1,0 +1,7 @@
+pm4py
+editdistance
+coverage
+codecov
+numpy
+pytest
+pytest-cov
