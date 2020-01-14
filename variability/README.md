@@ -31,7 +31,7 @@ divide each edit distance with the maximum edit distance between that cases
 
 **Advantages**
 - gives a output between 0 and 1: immediately interpretable
-- the number represents the percentage of portion of string that is equals
+- the number represents the percentage of portion of string that is equals (**not sure??**)
 - resolve the problem of length of traces 
 
 **Disadvantages**
@@ -44,13 +44,14 @@ real miss-match of characters
 ### My Variability LZW
 We try to solve the problem of cycles introducing a form of compression: the 
 next time we find a sequence of activity we substitute that sequence with a 
-single activity (as does LWZ compression algorithm).  
+single activity (as does LWZ compression algorithm).
 This mechanism allow us to penalize less in case of cycles because the fallowing 
 iterations will produce a string with a shorter trace.  
 This mechanism have the problem that penalize also traces that has an equal parts
 in cycles (that is compressed) and a different part outside (non-compressed, in the
 final percentage will have an higher impact).  
 This mechanism significantly improves similarity in:
+
 - L13.xes
 - BPIChallenge2012.xes
 - BPIChallenge2019.xes

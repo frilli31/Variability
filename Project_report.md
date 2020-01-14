@@ -75,7 +75,7 @@ We have tried another edit distance metric, that is Damerau-Levenshtein edit dis
 
 ### Third approach
 
-To address the weakness of edit distance, we developed a third way that consist in normalization of edit distance.
+To address the weakness of edit distance, we developed a third way that consist in normalization of edit distance.  We normalise edit distance by the greatest possible distance between the traces to reﬂect that a distance of one operation on two very long strings should be considered less signiﬁcant than on very short strings. In this way, we are able to compare the result with logs with a different average length.
 
 ```python
 def compute_my_variability(log: lg.EventLog):
@@ -98,3 +98,4 @@ def compute_my_variability(log: lg.EventLog):
     return 1 - (float(sum_of_distances) / sum_of_length)
 ```
 
+This metric produces a result in the range [0, 1], that is immediatly interpretable because it represent the percentage of equal traces in the event log.
