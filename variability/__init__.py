@@ -52,9 +52,8 @@ def compute_edit_distance_variability(log: lg.EventLog) -> float:
     # In the end we sum all of them.
     sum_of_distances = sum(
         num_of_items_1 * num_of_items_2 * editdistance.eval(variant1, variant2)
-        for (variant1, num_of_items_1), (variant2, num_of_items_2) in combinations(
-            variants_and_counts.items(), 2
-        )
+        for (variant1, num_of_items_1), (variant2, num_of_items_2)
+            in combinations(variants_and_counts.items(), 2)
     )
 
     # We multiply the sum of distances by 2 because to add the sum of distances
@@ -64,7 +63,7 @@ def compute_edit_distance_variability(log: lg.EventLog) -> float:
     return float(sum_of_distances * 2) / (size_of_log * (size_of_log - 1))
 
 
-def compute_my_variability(log: lg.EventLog):
+def compute_my_variability(log: lg.EventLog) -> float:
     """Compute the average of normalized edit distances (Levenshtein distance)
     between each pairs of traces.
 
