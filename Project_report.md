@@ -99,3 +99,18 @@ def compute_my_variability(log: lg.EventLog):
 ```
 
 This metric produces a result in the range [0, 1], that is immediatly interpretable because it represent the percentage of equal traces in the event log.
+
+
+
+
+
+
+
+# TODO
+
+Versione nostra della variabilità: è corretto non appiattire il log, perché due varianti con poca edit distance hanno un impatto maggiore se questi varianti si ripetono molte volte nel log.
+
+Meglio la nostra variabilità invece di normalizzare ogni coppia di tracce -> da un numero meno significativo. 
+
+Migliore, secondo Luca, la media delle normalizzate
+
