@@ -79,7 +79,7 @@
 \author
 {Luca Allegro 1211142 \\ Alberto Bezzon 1211016\\
 \\
-Department of Science (Computer Science), University of Padua
+Department of Mathematics (Computer Science), University of Padua
 }
 
 % Include the date command, but leave its argument blank.
@@ -96,12 +96,20 @@ Department of Science (Computer Science), University of Padua
 \usepackage{caption}
 \usepackage{placeins}
 \usepackage{float}
+\usepackage{nameref}
+\usepackage{hyperref}
 
 \graphicspath{ {./images/} } 
 %\usemintedstyle[python]{monokai}
 \newenvironment{code}{\captionsetup{type=listing}}{}
 \SetupFloatingEnvironment{listing}{name=Code snippet}
-%\sloppy
+
+\hypersetup{
+	colorlinks = true,
+	linkcolor = {blue},
+	citecolor = {red},
+	urlcolor = {blue},
+}
 \begin{document} 
 
 % Double-space the manuscript.
@@ -135,17 +143,18 @@ Department of Science (Computer Science), University of Padua
 \newpage
 \section*{Introduction}
 
-The aim of this report is to sum up the Process Mining project. In this project we aim at measuring how much variable are event logs, in terms of variety of behavior. Computing the variability of a log can indeed be rather useful, for instance, to decide for (a procedural or a declarative) model discovery, or to decide which prediction technique to apply. The are a lot of different ways to measure the variability of an event log, three of them are described in the following sections.
+The goal of this report is to sum up the Process Mining project. In this project we aim at measuring how much variable are event logs, in terms of variety of behaviour. Computing the variability of a log can indeed be rather useful, for instance, to decide for (a procedural or a declarative) model discovery, or to decide which prediction technique to apply. The are a lot of different ways to measure the variability of an event log, three of them are described in the following sections.
 
+\smallskip
 A possible way to measure the variability of an event log is counting the number of variants that it contains. A second possibility is to average the edit distance between each pair of traces in the event log. 
 
-The report is organized as follows: in Sec. \ref{firstApproach}, \ref{secondApproach} and \ref{thirdApproach}, the three ways to compute variability of a log have been proposed. For each section there are two subsections that explain advantages and disadvantages of the metric described in the section.
+\smallskip
+The report is organized as follows: in Sections \nameref{section:first}, \nameref{section:second} and \nameref{section:third} the three ways to compute variability of a log have been proposed. For each section there are two subsections that explain advantages and disadvantages of the metric described in the section. Section \nameref{section:results} contains the results performed by executing the functions in the BPIChallenge2011 log. The last section \nameref{section:structure} describes the project structure and provides instructions for executing the proposed code and related tests.
 
 
-\section*{First approach}\label{firstApproach}
+\section*{First approach}\label{section:first}
 
-%The first and easiest way to measure variability of an event log is counting the number of variants that it contains. Recall the definition of process variant, that is a sequence of process activities, the following fuctions does what we just described:
-The first and easiest way to measure variability of an event log is counting the number of variants that it contains. We recall the definition of event, traces, process variant and process log: an event is an occurrence of an activity in a particular process instance, a trace is a sequence of events of the same such instance, a process variant is a sequence of process activities and a log is a multiset of such traces. The following function compute this metric:
+The first and easiest way to measure variability of an event log is counting the number of variants that it contains. The function in \hyperref[code:code1]{Snippet 1} computes this metric. We recall the definition of event, trace, process variant and process log: an event is an occurrence of an activity in a particular process instance, a trace is a sequence of events of the same such instance, a process variant is a sequence of process activities and a log is a multiset of such traces.
 
 \begin{code}
 	\captionof{listing}{Function compute\_variant\_variability}
@@ -176,12 +185,12 @@ return len(set(tuple(event["concept:name"] for event in case) for case in log))
 
 \noindent This is the simplest and intuitive way to compute log variability. However, this metric does not consider the size of the log, i.e. big size log are penalized with respect to small size log. There is also a second reason that this way is unhelpful to our goal: it does not consider how variants differ to one another.
 
-\paragraph*{Example:} If we have a process log L\textsubscript{1}=[\textless a,b,c\textgreater\textsuperscript{10}, \textless b,c,d \textgreater\textsuperscript{20}] the function returns 2 because in the log there are two different variants. If the log is L\textsubscript{2}=[\textless a,b\textgreater, \textless b,c\textgreater, \textless c,d\textgreater] the function returns 3; but L\textsubscript{1} is bigger than L\textsubscript{2}. This example shows how poorly informative this metric.
+\paragraph*{Example:} Consider the following two logs L\textsubscript{1}=[\textless a,b,c\textgreater, \textless a,b,d\textgreater] and L\textsubscript{2}=[\textless a,b,c\textgreater, \textless b,c\textgreater, \textless x,y,z\textgreater]. The function returns 2 in both cases, but L\textsubscript{1} has more similar variants rather than L\textsubscript{2} which variants are completely different. This example shows how poorly informative this metric is.
 
 
-\section*{Second approach}
+\section*{Second approach}\label{section:second}
 
-In order to obtain a more informative metric to compute log variability, the second approach that we developed consists in averaging edit distance between each pair of traces in the event log. For this purpose, we decided to use the Levenshtein distance. Levenshtein edit distance is the most well-known string edit distance metric and it is defined by the number of insertions, deletions and substitutions required to convert one string into another. The basic idea to compute average edit distance is, first compute the sum of edit distance of all possible combination of two pair of traces and then divide it by the number of possible combination that is \texttt{size\_of\_log * (size\_of\_log - 1)}.
+In order to obtain a more informative metric to compute log variability, the second approach that we developed consists in averaging edit distance between each pair of traces in the event log. For this purpose, we decided to use the Levenshtein distance\cite{WEBSITE:1} that is the most well-known string edit distance metric and it is defined by the number of insertions, deletions and substitutions required to convert one string into another. The basic idea to compute average edit distance is, first compute the sum of edit distance of all possible combination of two pair of traces and then divide it by the number of possible combination that is \texttt{size\_of\_log $\cdot$ (size\_of\_log - 1)}.
 
 \begin{code}
 	\captionof{listing}{Function compute\_edit\_distance\_variability}
@@ -232,19 +241,18 @@ return float(sum_of_distances * 2) / (size_of_log * (size_of_log - 1))
 	\end{minted}
 \end{code}
 
-\noident Some important caveats are:
+\noindent Some important caveats are:
 \begin{itemize}
-	%\item we use variants rather than traces because we calculate the edit distance of two different traces multiplied by the number of repetition of a trace instead of calculate edit distance between two traces n times (in row 10 of the previous snippets of code(riferimento))
-	\item we use variants instead of the traces because, instead of calculating edit distance between two traces \textit{n} times, we calculate the edit distance of two different traces multiplying by the number of repetitions of a trace (\texttt{line 26} of the snippet \ref{code:code2}).
-	\item \texttt{combination} method of the python library \texttt{itertools} provide all the combinations of length two of different variants (\texttt{line 29} of the snippet \ref{code:code2}); the only case not covered by combinations is when two traces have the same variant but the edit distance is 0, so it does not affect the result (because the sum of all distances does not change summing 0).
-	\item To optimize the calculation of edit distance, we use a C++ library with API for python because the above function has high complexity and with very big log (e.g. BPIchallenge2011.xes) it takes very long time\footnote{We know that computing edit distance between two traces has complexity O(\textit{nm}) where \textit{n} and \textit{m} are the lengths of the traces. The whole function has a complexity of O(\textit{l}\^{}2*\textit{nm}) where \textit{l} is the number of variants in the event log.}.
+	\item we use variants as an alternative to traces because, instead of calculating edit distance between two traces \textit{n} times, we calculate the edit distance of two different traces multiplying by the number of repetitions of a trace (\texttt{line 26} of \hyperref[code:code2]{Snippet 2}).
+	\item \texttt{combination} method of the python library \texttt{itertools} provides all the combinations of length two of different variants (\texttt{line 29} of \hyperref[code:code2]{Snippet 2}); the only case not covered by combinations is when two traces have the same variant but the edit distance is 0, so it does not affect the result (because the sum of all distances does not change summing 0).
+	\item To optimize the calculation of edit distance, we use a C++ library with API for python because the above function has high complexity and with very big log (e.g. \textit{BPIchallenge2011.xes}) it takes very long time\footnote{We know that computing edit distance between two traces has complexity O(\textit{n$\cdot$m}) where \textit{n} and \textit{m} are the lengths of the traces. The whole function has a complexity O(\textit{l}\textsuperscript{2}$\cdot$\textit{n$\cdot$m}) where \textit{l} is the number of variants in the event log and \textit{n} and \textit{m} are the lengths of the longest traces.}.
 \end{itemize}
 
 \subsection*{Advantages}
 
-\noident The main advantage is that this metric solves the problems of the metric described in Sect. \ref{firstApproach}. In fact:
+\noindent The main advantage is that this metric solves the problems of the metric described in Section \hyperref[section:first]{First approach}. In fact:
 \begin{itemize}
-	\item it takes into account the size of the log. Unlike the previous metric, this doesn't penalize big size logs.
+	\item it takes into account the size of the log. Unlike the previous metric, this does not penalize big size logs.
 	\item it considers how variants differ one another.
 \end{itemize}
 
@@ -252,17 +260,15 @@ return float(sum_of_distances * 2) / (size_of_log * (size_of_log - 1))
 
 This method has also the following disadvantages:
 \begin{itemize}
-	\item it is very time-consuming for big size logs due to the fact that it has a high complexity.
-	\item it does not consider the length of each trace, that's why logs with long traces are penalized).\label{ref1}
+	\item it is very time-consuming for big size logs or long traces due to the fact that it has a high complexity.
+	\item it does not consider the length of each trace, that's why logs with long traces are penalized).\label{ref:cons2}
 \end{itemize}  
 
-\paragraph*{Example:} Consider two logs L\textsubscript{1}=[\textless a,b \textgreater, \textless c,d \textgreater] and L\textsubscript{2}=[\textless a,b,c,d,e \textgreater, \textless a,b,c,f,g \textgreater]. \texttt{compute\_edit\_distance\_variability} returns 2 for both logs but L\textsubscript{1} has a higher variability w.r.t. L\textsubscript{2} that has the first three events equal in both traces. 
+\paragraph*{Example:} Consider the following logs: L\textsubscript{1}=[\textless a,b\textgreater, \textless c,d\textgreater] and L\textsubscript{2}=[\textless a,b,c,d,e\textgreater,\\ \textless a,b,c,f,g\textgreater]. The function \texttt{compute\_edit\_distance\_variability} returns 2 for both logs but L\textsubscript{1} has a higher variability compared to L\textsubscript{2} that has the first three events equal in both traces (the traces in L\textsubscript{2} are more similar). 
+\newpage
+\section*{Third approach}\label{section:third}
 
-%We have tried another edit distance metric, that is Damerau-Levenshtein edit distance. This distance is similar to Levenshtein edit distance with the addition of another possible operation (transposition of two adjacent characters) to convet a string into another. This metric performs better than Levenshtein distance only in the case where two traces differs only by order of events at distance one.
-
-\section*{Third approach}
-
-To address the weakness of the metrics based on edit distance, we developed a third way that consists in normalization of edit distance.  We normalise edit distance by the greatest possible distance between the traces to reflect that a distance of one operation on two very long strings should be considered less significant than on very short strings. In this way, we are able to compare the result with logs with a different average length.
+To address the weakness of the metrics based on edit distance, we developed a third way that consists in normalization of edit distance (we see this approach in Section \textit{3.6.1 Edit Distance Between Traces} of article \cite{ARTICLE:1}).  We normalise edit distance by the greatest possible distance between the traces to reflect that a distance of one operation on two very long strings should be considered less significant than on very short strings. In this way, we are able to compare the result with logs with a different average length.
 \begin{code}
 	\captionof{listing}{Function compute\_my\_variability}
 	\label{code:code3}
@@ -318,18 +324,18 @@ return 1 - (sum_of_distances * 2 / (size_of_log * (size_of_log - 1)))
 
 \subsection*{Advantages}
 
-This metric produces a result in the range [0, 1], that is immediately interpretable because it represent the fraction of how traces are equals. In fact, the higher the number is, the
-more similar the traces are. When this number is 0, all traces of a log have nothing in common. When it is 1, all traces of a log have the same variant. In conclusion, this metric solve the problem \ref{ref1}.
+This metric produces a result in the range [0, 1], that is immediately interpretable because it represent the fraction of how much traces are equals. In fact, the higher the number is, the
+more similar the traces are. This number is 0 if all traces of the log have nothing in common. Conversely, it is 1 when all traces of the log have the same variant. In conclusion, this metric solve the \hyperref[ref:cons2]{second disadvantage} of the previous metric.
 
-\paragraph*{Example:} Consider once again the two log of the previous example (L\textsubscript{1}=[\textless a,b \textgreater, \textless c,d \textgreater] and L\textsubscript{2}=[\textless a,b,c,d,e \textgreater, \textless a,b,c,f,g \textgreater] reported for convinience). \texttt{compute\_my\_variability} function returns 0 for L\textsubscript{1} which traces are completely different and 0.6 for L\textsubscript{2} which traces are somehow similar.
+\paragraph*{Example:} Consider once again the two log of the previous example (L\textsubscript{1}=[\textless a,b\textgreater, \textless c,d\textgreater] and L\textsubscript{2}=[\textless a,b,c,d,e\textgreater, \textless a,b,c,f,g\textgreater] reported for convenience). The function in \hyperref[code:code3]{Snippet 3} returns 0 for L\textsubscript{1} which traces are completely different and 0.6 for L\textsubscript{2} which traces are somehow similar.
 
 \subsection*{Disadvantages}
 
-The main disadvantage of this metric is the that it does not consider cycles in traces, i.e. traces with a repeated number of event are wrongly penalized. See the following example.
+The main disadvantage of this metric is that it does not consider cycles in traces, i.e. traces with a repeated number of event are wrongly penalized. See the following example.
 
-\paragraph*{Example:} This metric penalize the following traces A = ABCBCBCE and B = ABCE.
+\paragraph*{Example:} Consider the following two logs: L\textsubscript{1}=[\textless a,b,c,b,c,b,c,e \textgreater, \textless a,b,c,e \textgreater] and L\textsubscript{2}=[\textless a,b,c \textgreater, \textless e,f,g \textgreater]. This metric penalize L\textsubscript{1} but it is less variable w.r.t. L\textsubscript{2} because the first trace in L\textsubscript{2} is a very long traces.
 
-\section*{BPI Challenge 2011}
+\section*{BPI Challenge 2011}\label{section:results}
 
 In this section, we report and discuss the results of the three different metrics realized. The following table summarize the results.
 \renewcommand{\arraystretch}{1.5}\\
@@ -337,29 +343,41 @@ In this section, we report and discuss the results of the three different metric
 	\centering
 		\begin{tabular}{ |c|c|  }
 			\hline
-			Functions & Results \\
+			\textbf{Functions} & \textbf{Results }\\
 			\hline
-			\textit{compute\_variant\_variability} & 981 \\ \hline
-			\textit{compute\_edit\_distance\_variability} & 195.88194492325937 \\ \hline
-			\textit{compute\_my\_variability} & 0.14258102346211654 \\
+			\texttt{compute\_variant\_variability} & 981 \\ \hline
+			\texttt{compute\_edit\_distance\_variability} & 195.88194492325937 \\ \hline
+			\texttt{compute\_my\_variability} & 0.14258102346211654 \\
 			\hline
 		\end{tabular}
-	\caption{Table of overall results}
-	\label{table:1}
+	\caption{Table summarizing the results obtained}
+	\label{table:results}
 \end{table}
 
-As you can see in Table 1, the result obtained applying \texttt{compute\_variant\_variability} is 981. This number indicates that BPIChallenge2011 log has a lot of variants. We verified this data importing the log on Disco and w.r.t. size of log (1143), the only conclusion is that most of traces are different one another. Eventually, this metric is too simple too capture an interesting variability that involves how different are this variants.
+As you can see in \hyperref[table:results]{Table 1}, the result obtained applying \texttt{compute\_variant\_variability} is 981. This number indicates that BPIChallenge2011 log has 981 of variants. We verified this data importing the log on Disco and the two number match. The only conclusion, given the size of log (1143), is that most of traces are different one another. Thus, this metric is too simple too capture an interesting variability that involves how different are this variants.
 
 \smallskip  
 
-The second result obtained applying \texttt{compute\_edit\_distance\_variability} is \textit{195.88194492325937}. This number is more informative w.r.t the previous result and it tell us that there is a big average edit distance between pair of traces, hence, the log has an high variability. But you cannot understand how much traces have something in common.
+The second result obtained applying \texttt{compute\_edit\_distance\_variability} is $\approx$ \textit{195.88}. This number is more informative w.r.t the previous result and it tell us that there is a big average edit distance between pair of traces, hence, the log has an high variability. But you cannot understand how much traces have in common.
 
 \smallskip
 
-The last result obtained by applying \texttt{compute\_my\_variability} is \textit{0.14258102346211654}. This number gives more information than the others, because it tells how much two traces, random picked, have in common. In this case, the result is 15\% which means that traces are disequal (hanno poco in comune) and we can conclude that the log has high variability.
+The last result obtained by applying \texttt{compute\_my\_variability} is $\approx$ \textit{0.14}. This number gives more information than the others, because it tells how much two traces, random picked, have in common. In this case, the result is 15\% which means that traces are different and we can conclude that the log has high variability.
+\newpage
+\section*{Project structure}\label{section:structure}
 
-\section*{Instructions}
+The project is structured in the following manner:
+\begin{itemize}
+	\item \texttt{\_init.py}: contains the functions that implements the three different metrics
+	\item \texttt{\_test.py}: contains the test cases
+	\item \texttt{main.py}: contains an example of using the three functions
+	\item directory \texttt{resources} contains examples of logs used for testing functions
+		
+\end{itemize}
 
+\subsubsection*{Instructions}
+
+The following steps are the instructions to run the code.
 \begin{enumerate}
 	\item Extract \textit{Progetto.zip}
 	\item Open a terminal inside the folder
@@ -368,38 +386,8 @@ The last result obtained by applying \texttt{compute\_my\_variability} is \texti
 	\item In file \texttt{main.py} you can find an use example and you can run it: \texttt{python main.py}
 \end{enumerate}
 
-\bibliography{scibib}
-
-\bibliographystyle{Science}
-
-
-
-% Following is a new environment, {scilastnote}, that's defined in the
-% preamble and that allows authors to add a reference at the end of the
-% list that's not signaled in the text; such references are used in
-% *Science* for acknowledgments of funding, help, etc.
-
-\begin{scilastnote}
-\end{scilastnote}
-
-
-
-
-% For your review copy (i.e., the file you initially send in for
-% evaluation), you can use the {figure} environment and the
-% \includegraphics command to stream your figures into the text, placing
-% all figures at the end.  For the final, revised manuscript for
-% acceptance and production, however, PostScript or other graphics
-% should not be streamed into your compliled file.  Instead, set
-% captions as simple paragraphs (with a \noindent tag), setting them
-% off from the rest of the text with a \clearpage as shown  below, and
-% submit figures as separate files according to the Art Department's
-% instructions.
-
-
-\clearpage
-
-
+\bibliography{scifile} 
+\bibliographystyle{ieeetr}
 
 \end{document}
 
