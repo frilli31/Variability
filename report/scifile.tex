@@ -366,14 +366,14 @@ The last result obtained by applying \texttt{compute\_my\_variability} is $\appr
 \newpage
 
 \section*{Test Result}
-Running the command "pytest" executes 25 tests:
-- 19: for compute_variant_variability (executes once for each file in resource folder)
-- 3 for compute_edit_distance_variability
-- 3 for compute_my_variability
+We have implemented 25 tests that can be executed with \texttt{pytest --cov=./} command:
+\begin{itemize}
+	\item 19 tests for \texttt{compute\_variant\_variability} (once for each file in resources folder)
+	\item 3 tests for \texttt{compute\_edit\_distance\_variability}
+	\item 3 tests for \texttt{compute\_my\_variability}
+\end{itemize}
 
-All tests pass.
-
-The code coverage of the file variability.py, that contains the three functions is 100%.
+\noindent All tests pass. The code coverage of the file \texttt{variability.py}, that contains the three functions, is 100\%.
 
 \section*{Project structure}\label{section:structure}
 
