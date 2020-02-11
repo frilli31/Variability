@@ -268,7 +268,7 @@ This method has also the following disadvantages:
 \newpage
 \section*{Third approach}\label{section:third}
 
-To address the weakness of the metrics based on edit distance, we developed a third way that consists in normalization of edit distance (we found this approach in Section \textit{3.6.1 Edit Distance Between Traces} of article \cite{ARTICLE:1}).  We normalise edit distance by the greatest possible distance between the traces to reflect that a distance of one operation on two very long strings should be considered less significant than on very short strings. In this way, we are able to compare the result with logs with a different average length.
+To address the weakness of the metrics based on edit distance, we developed a third way that consists in normalization of edit distance (we see this approach in Section \textit{3.6.1 Edit Distance Between Traces} of article \cite{ARTICLE:1}).  We normalise edit distance by the greatest possible distance between the traces to reflect that a distance of one operation on two very long strings should be considered less significant than on very short strings. In this way, we are able to compare the result with logs with a different average length.
 \begin{code}
 	\captionof{listing}{Function compute\_my\_variability}
 	\label{code:code3}
@@ -333,7 +333,7 @@ more similar the traces are. This number is 0 if all traces of the log have noth
 
 The main disadvantage of this metric is that it does not consider cycles in traces, i.e. traces with a repeated number of event are wrongly penalized. See the following example.
 
-\paragraph*{Example:} Consider the following two logs: L\textsubscript{1}=[\textless a,b,c,b,c,b,c,b,c,b,c,b,c\textgreater, \textless a,b,c,b,c\textgreater] and L\textsubscript{2}=[\textless a,b,c,p,q,r\textgreater, \textless a,b,c,d,e,f\textgreater]. The function \texttt{compute\_my\_variability} returns 0.38 for L\textsubscript{1} and 0.5 for L\textsubscript{2}; however L\textsubscript{1} is less variable w.r.t. L\textsubscript{2} but it si penalize because the first trace in L\textsubscript{2} is a very long traces.
+\paragraph*{Example:} Consider the following two logs: L\textsubscript{1}=[\textless a,b,c,b,c,b,c,e \textgreater, \textless a,b,c,e \textgreater] and L\textsubscript{2}=[\textless a,b,c \textgreater, \textless e,f,g \textgreater]. This metric penalize L\textsubscript{1} but it is less variable w.r.t. L\textsubscript{2} because the first trace in L\textsubscript{2} is a very long traces.
 
 \section*{BPI Challenge 2011}\label{section:results}
 
@@ -368,11 +368,11 @@ The last result obtained by applying \texttt{compute\_my\_variability} is $\appr
 
 The project is structured in the following manner:
 \begin{itemize}
-	\item \texttt{\_init.py}: contains the functions that implements the three different metrics
+	\item \texttt{variability.py}: contains the functions that implements the three different metrics
+	\item \texttt{requirements.txt}: contains the requirements useful to test and execute the project
 	\item \texttt{\_test.py}: contains the test cases
 	\item \texttt{main.py}: contains an example of using the three functions
 	\item directory \texttt{resources} contains examples of logs used for testing functions
-		
 \end{itemize}
 
 \subsubsection*{Instructions}
@@ -382,7 +382,7 @@ The following steps are the instructions to run the code.
 	\item Extract \textit{Progetto.zip}
 	\item Open a terminal inside the folder
 	\item Install requirements using the following command: \texttt{pip install requirements.txt}
-	\item Run the tests using: \texttt{pytest}
+	\item Run the tests using: \texttt{pytest --cov=./}
 	\item In file \texttt{main.py} you can find an use example and you can run it: \texttt{python main.py}
 \end{enumerate}
 
