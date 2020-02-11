@@ -364,6 +364,17 @@ The second result obtained applying \texttt{compute\_edit\_distance\_variability
 
 The last result obtained by applying \texttt{compute\_my\_variability} is $\approx$ \textit{0.14}. This number gives more information than the others, because it tells how much two traces, random picked, have in common. In this case, the result is 15\% which means that traces are different and we can conclude that the log has high variability.
 \newpage
+
+\section*{Test Result}
+Running the command "pytest" executes 25 tests:
+- 19: for compute_variant_variability (executes once for each file in resource folder)
+- 3 for compute_edit_distance_variability
+- 3 for compute_my_variability
+
+All tests pass.
+
+The code coverage of the file variability.py, that contains the three functions is 100%.
+
 \section*{Project structure}\label{section:structure}
 
 The project is structured in the following manner:
